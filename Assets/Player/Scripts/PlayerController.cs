@@ -8,6 +8,8 @@ public class PlayerController : NetworkBehaviour
 {
 
     private Vector2 _movementInput;
+    private Vector3 _lastPosition;
+    private Vector3 _velocity;
 
     public float moveSpeed = 1f;
 
@@ -15,9 +17,14 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner || _movementInput == Vector2.zero) return;
+        if (!IsOwner) return;
+        _lastPosition = transform.position;
         
         TryMove(_movementInput);
+
+        _velocity = (transform.position - _lastPosition) / Time.deltaTime;
+        UpdateAnimation(_velocity);
+
     }
 
     private void TryMove(Vector2 direction)
@@ -25,6 +32,16 @@ public class PlayerController : NetworkBehaviour
         var moveHere = new Vector3(direction.x, direction.y, 0);
         moveHere *= Time.deltaTime * moveSpeed;
         transform.position += moveHere;
+    }
+
+    private void UpdateAnimation(Vector2 vel)
+    {
+        if (animator == null) return;
+
+        animator.SetBool("IsMoving", vel != Vector2.zero);
+
+        animator.SetInteger("Horizontal", (int)MathF.Ceiling(vel.x));
+        animator.SetInteger("Vertical", (int)MathF.Ceiling(vel.y));
     }
 
     private void OnMove(InputValue inputValue)
