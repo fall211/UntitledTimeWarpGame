@@ -15,6 +15,15 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] private Animator animator;
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (!IsOwner) return;
+        _lastPosition = transform.position;
+    }
+
+
+
     private void Update()
     {
         if (!IsOwner) return;
@@ -32,6 +41,10 @@ public class PlayerController : NetworkBehaviour
         var moveHere = new Vector3(direction.x, direction.y, 0);
         moveHere *= Time.deltaTime * moveSpeed;
         transform.position += moveHere;
+    }
+
+    private void TryAttack(){
+        var mousePos = Mouse.current.position.ReadValue();
     }
 
     private void UpdateAnimation(Vector2 vel)
