@@ -34,6 +34,7 @@ public class PlayerController : NetworkBehaviour
         _velocity = (transform.position - _lastPosition) / Time.deltaTime;
         UpdateAnimation(_velocity);
 
+
     }
 
     private void TryMove(Vector2 direction)
@@ -45,16 +46,23 @@ public class PlayerController : NetworkBehaviour
 
     private void TryAttack(){
         var mousePos = Mouse.current.position.ReadValue();
+        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        // calculate direction of attack from player to mouse position
+        var atkDirection = mousePos - new Vector2(transform.position.x, transform.position.y);
+        atkDirection.Normalize();
+
+        animator.SetFloat("x_atk", atkDirection.x);
+        animator.SetFloat("y_atk", atkDirection.y);
+        Debug.Log(atkDirection);
     }
 
     private void UpdateAnimation(Vector2 vel)
     {
         if (animator == null) return;
 
-        animator.SetBool("IsMoving", vel != Vector2.zero);
+        animator.SetFloat("x", vel.x);
+        animator.SetFloat("y", vel.y);
 
-        animator.SetInteger("Horizontal", (int)MathF.Ceiling(vel.x));
-        animator.SetInteger("Vertical", (int)MathF.Ceiling(vel.y));
     }
 
     private void OnMove(InputValue inputValue)
@@ -62,6 +70,11 @@ public class PlayerController : NetworkBehaviour
         _movementInput = inputValue.Get<Vector2>();
     }
 
+    private void OnFire(InputValue inputValue){
+        if (!IsOwner) return;
+        TryAttack();
+        animator.SetTrigger("Attack");
+    }
 
 }
 
