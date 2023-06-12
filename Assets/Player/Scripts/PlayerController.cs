@@ -18,6 +18,8 @@ public class PlayerController : NetworkBehaviour
     public float moveSpeed = 1f;
 
     [SerializeField] private Animator animator;
+    private Camera _mainCamera;
+    [SerializeField] private float _cameraMoveSpeed = 1f;
 
     public override void OnNetworkSpawn()
     {
@@ -46,6 +48,7 @@ public class PlayerController : NetworkBehaviour
         _velocity = (transform.position - _lastPosition) / Time.deltaTime;
         UpdateAnimation(_velocity);
 
+        MoveCamera();
 
     }
 
@@ -62,7 +65,6 @@ public class PlayerController : NetworkBehaviour
         return true;
     }
 
-
     private void UpdateAnimation(Vector2 vel)
     {
         if (animator == null) return;
@@ -70,6 +72,18 @@ public class PlayerController : NetworkBehaviour
         animator.SetFloat("x", vel.x);
         animator.SetFloat("y", vel.y);
 
+    }
+
+    private void MoveCamera()
+    {
+        if (_mainCamera == null) _mainCamera = Camera.main;
+        if (_mainCamera == null) return;
+
+        var cameraPos = _mainCamera.transform.position;
+        var playerPos = transform.position;
+        var newPos = Vector3.Lerp(cameraPos, playerPos, Time.deltaTime * _cameraMoveSpeed);
+        newPos.z = -10;
+        _mainCamera.transform.position = newPos;
     }
 
     private void OnMove(InputValue inputValue)

@@ -152,6 +152,7 @@ MonoBehaviour:
   _raycastOrigin: {fileID: 4181460948502027145}
   moveSpeed: 5
   animator: {fileID: 7884096377823608202}
+  _cameraMoveSpeed: 2
 --- !u!95 &7884096377823608202
 Animator:
   serializedVersion: 5

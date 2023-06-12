@@ -15028,7 +15028,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 1.1057434, y: 3.9562526, z: 0}
+  m_ChunkCullingBounds: {x: 1.1057423, y: 3.6894693, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -16459,6 +16459,7 @@ MonoBehaviour:
   _serverButton: {fileID: 1201441622}
   _hostButton: {fileID: 148662527}
   _clientButton: {fileID: 1344334537}
+  _canvas: {fileID: 949749475}
 --- !u!1 &2076758104
 GameObject:
   m_ObjectHideFlags: 0
