@@ -72766,8 +72766,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9f0654cd5554991489d4d4e4e1f088bd, type: 2}
   - {fileID: 11400000, guid: 9955f638bc8ad58408a141265566de8e, type: 2}
   obstacleTilemap: {fileID: 1489575562}
-  obstacleTiles:
-  - {fileID: 11400000, guid: 7b2aeed7a4823184dbd9602b5fcfa246, type: 2}
+  obstacleTiles: []
   worldTilemap: {fileID: 234252297}
   worldTiles: {fileID: 11400000, guid: aab129beb76584f6b89273aee0d52907, type: 2}
   backgroundTilemap: {fileID: 1780864029}

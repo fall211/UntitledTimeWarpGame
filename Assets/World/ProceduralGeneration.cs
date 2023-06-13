@@ -22,7 +22,7 @@ public class ProceduralGeneration : MonoBehaviour
         GenerateWorldTiles(mapSize, noiseMap, falloffMap);
         CleanUpWorldTiles(mapSize);
         GenerateResourceTiles(mapSize);
-        GenerateObstacleTiles(mapSize);
+        // GenerateObstacleTiles(mapSize);
     }
 
     private void GenerateBackgroundTiles(int mapSize)
