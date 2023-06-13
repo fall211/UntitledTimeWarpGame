@@ -52,6 +52,7 @@ public class ProceduralGeneration : MonoBehaviour
     }
 
     private void GenerateResourceTiles(int mapSize){
+        ResourceManager resourceManager = resourceTilemap.GetComponent<ResourceManager>();
         for (int x = -mapSize; x < mapSize; x++)
         {
             for (int y = -mapSize; y < mapSize; y++)
@@ -63,7 +64,7 @@ public class ProceduralGeneration : MonoBehaviour
                     if (isResourceTile)
                     {
                         int randomTileIndex = Random.Range(0, resourceTiles.Length);
-                        resourceTilemap.SetTile(new Vector3Int(x, y, 0), resourceTiles[randomTileIndex]);
+                        resourceManager.AddResourceTile(new Vector3Int(x, y, 0), resourceTiles[randomTileIndex]);
                     }
 
                 }

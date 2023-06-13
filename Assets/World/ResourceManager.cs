@@ -5,13 +5,10 @@ using UnityEngine.Tilemaps;
 
 public class ResourceManager : MonoBehaviour
 {
-    private Tilemap tilemap;
+    [SerializeField] private Tilemap tilemap;
     private List<ResourceTile> resources = new List<ResourceTile>();
 
-    void Awake()
-    {
-        tilemap = GetComponent<Tilemap>();
-    }
+
 
     public ResourceTile GetResourceTile(Vector3Int tilePosition)
     {
@@ -42,9 +39,9 @@ public class ResourceManager : MonoBehaviour
         }
     }
 
-    // Call this function to add resource tiles to your ResourceManager
-    public void AddResourceTile(Vector3Int tilePosition, TileBase tile, int amount)
+    public void AddResourceTile(Vector3Int tilePosition, Tile tile)
     {
-        resources.Add(new ResourceTile(tilePosition, tile, amount));
+        resources.Add(new ResourceTile(tilePosition, tile));
+        tilemap.SetTile(tilePosition, tile);
     }
 }

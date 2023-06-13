@@ -7,14 +7,14 @@ using UnityEngine.Tilemaps;
 public class ResourceTile
 {
     public Vector3Int tilePosition; 
-    public TileBase tile;
+    public Tile tile;
     public int amount; // amount of resource
 
-    public ResourceTile(Vector3Int pos, TileBase tile, int amount)
+    public ResourceTile(Vector3Int pos, Tile tile)
     {
         tilePosition = pos;
         this.tile = tile;
-        this.amount = amount;
+        this.amount = 1;
     }
 }
 
