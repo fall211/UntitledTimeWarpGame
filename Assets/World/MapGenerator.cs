@@ -5,8 +5,7 @@ using System.Collections.Generic;
 public class MapGenerator : MonoBehaviour {
 
 	public int mapSize;
-	private float noiseScale;
-
+	[SerializeField] private float noiseScale;
 	[SerializeField] private int octaves;
 	[Range(0,1)]
 	[SerializeField] private float persistance;
@@ -17,21 +16,23 @@ public class MapGenerator : MonoBehaviour {
 	public bool autoUpdate;
 
 	public void GenerateMap() {
-        noiseScale = mapSize / 5f;
 
         int noiseMapSize = mapSize * 2 + 1;
 
-		List<List<float>> noiseMap = Noise.GenerateNoiseMap(noiseMapSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
-        List<List<float>> falloffMap = Noise.GenerateFalloffMap(noiseMapSize);
+		List<List<float>> heightMap = Noise.GenerateHeightMap(noiseMapSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
+		List<List<float>> biomeMap = Noise.GenerateNoiseMap(noiseMapSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
         ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
         proceduralGeneration.ClearMap();
-        proceduralGeneration.GenerateMap(mapSize, noiseMap, falloffMap);
+        proceduralGeneration.GenerateMap(mapSize, heightMap, biomeMap);
 	}
 
 	void OnValidate() {
 		if (mapSize < 1) {
 			mapSize = 1;
+		}
+		if (noiseScale < 1) {
+			noiseScale = 1;
 		}
 		if (lacunarity < 1) {
 			lacunarity = 1;

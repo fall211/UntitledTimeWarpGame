@@ -16,10 +16,12 @@ public class ProceduralGeneration : MonoBehaviour
     [SerializeField] private Tile backgroundTile;
 
 
-    public void GenerateMap(int mapSize, List<List<float>> noiseMap, List<List<float>> falloffMap)
+    public void GenerateMap(int mapSize,
+        List<List<float>> heightMap, 
+        List<List<float>> biomeMap)
     {   
         GenerateBackgroundTiles(mapSize);
-        GenerateWorldTiles(mapSize, noiseMap, falloffMap);
+        GenerateWorldTiles(mapSize, heightMap);
         CleanUpWorldTiles(mapSize);
         GenerateResourceTiles(mapSize);
         // GenerateObstacleTiles(mapSize);
@@ -36,24 +38,35 @@ public class ProceduralGeneration : MonoBehaviour
         }
     }
 
-    private void GenerateWorldTiles(int mapSize, List<List<float>> noiseMap, List<List<float>> falloffMap)
+    private void GenerateWorldTiles(int mapSize, List<List<float>> heightMap)
     {
         for (int x = -mapSize; x < mapSize; x++)
         {
             for (int y = -mapSize; y < mapSize; y++)
             {
-                float height = Noise.GenYCoords(x+mapSize, y+mapSize, noiseMap, falloffMap);
-                if (height > 0.25f)
+                float height = heightMap[x + mapSize][y + mapSize];
+                if (height > 0.75f){
+                    // raised
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles);
+                } else if (height > 0.5f)
                 {
+                    // grass
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles);
+                } else if (height > 0.25f)
+                {
+                    // sand
                     worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles);
                 }
             }
         }
     }
 
-    private void CleanUpWorldTiles(int mapSize)
-{
-    // remove tiles that are sandwiched between exactly two adjacent tiles on opposite sides
+    private void GenerateBiomes(int mapSize, List<List<float>> heightMap, List<List<float>> biomeMap){
+        // not implemented
+        
+    }
+
+    private void CleanUpWorldTiles(int mapSize) {
     for (int x = -mapSize; x < mapSize; x++)
     {
         for (int y = -mapSize; y < mapSize; y++)

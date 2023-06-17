@@ -85,12 +85,18 @@ public static class Noise {
         return falloffMap;
 
     }
-    public static float GenYCoords(int x, int z,List<List<float>> noiseMap, List<List<float>> falloffMap) {
-        float y = noiseMap[x][z];
-        
-        y -= falloffMap[x][z];
-
-        return y;
+    public static List<List<float>> GenerateHeightMap(int size, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset) {
+        List<List<float>> noiseMap = GenerateNoiseMap(size, seed, scale, octaves, persistance, lacunarity, offset);
+        List<List<float>> falloffMap = GenerateFalloffMap(size);
+        List<List<float>> heightMap = new List<List<float>>();
+        for (int y = 0; y < noiseMap.Count; y++) {
+            List<float> row = new List<float>();
+            for (int x = 0; x < noiseMap[y].Count; x++) {
+                row.Add(noiseMap[x][y] - falloffMap[x][y]);
+            }
+            heightMap.Add(row);
+        }
+        return heightMap;
     }
     private static float Eval(float n) {
         if (n > 1) {
