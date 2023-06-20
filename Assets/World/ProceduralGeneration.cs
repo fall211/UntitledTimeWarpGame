@@ -8,10 +8,12 @@ public class ProceduralGeneration : MonoBehaviour
 {
     [SerializeField] private Tilemap resourceTilemap;
     [SerializeField] private Tile[] resourceTiles;
+    [SerializeField] private Tile[] treeTiles;
+    [SerializeField] private Tile[] rockTiles;
     [SerializeField] private Tilemap obstacleTilemap;
     [SerializeField] private Tile[] obstacleTiles;
     [SerializeField] private Tilemap worldTilemap;
-    [SerializeField] private RuleTile worldTiles;
+    [SerializeField] private RuleTile[] worldTiles;
     [SerializeField] private Tilemap backgroundTilemap;
     [SerializeField] private Tile backgroundTile;
 
@@ -22,8 +24,11 @@ public class ProceduralGeneration : MonoBehaviour
     {   
         GenerateBackgroundTiles(mapSize);
         GenerateWorldTiles(mapSize, heightMap);
+
+        GenerateBiomes(mapSize, heightMap, biomeMap);
+
         CleanUpWorldTiles(mapSize);
-        GenerateResourceTiles(mapSize);
+        // GenerateResourceTiles(mapSize);
         // GenerateObstacleTiles(mapSize);
     }
 
@@ -45,24 +50,50 @@ public class ProceduralGeneration : MonoBehaviour
             for (int y = -mapSize; y < mapSize; y++)
             {
                 float height = heightMap[x + mapSize][y + mapSize];
-                if (height > 0.75f){
+                if (height > 0.65f){
                     // raised
-                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles);
-                } else if (height > 0.5f)
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[1]);
+                } else if (height > 0.35f)
                 {
                     // grass
-                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles);
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[0]);
                 } else if (height > 0.25f)
                 {
                     // sand
-                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles);
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[2]);
                 }
             }
         }
     }
 
     private void GenerateBiomes(int mapSize, List<List<float>> heightMap, List<List<float>> biomeMap){
-        // not implemented
+        ResourceManager resourceManager = resourceTilemap.GetComponent<ResourceManager>();
+
+        for (int x = -mapSize; x < mapSize; x++){
+            for (int y = -mapSize; y < mapSize; y++){
+                float height = heightMap[x + mapSize][y + mapSize];
+                float biome = biomeMap[x + mapSize][y + mapSize];
+                bool isValidSpawnLocation = ValidSpawnLocation(x, y, mapSize) && resourceTilemap.GetTile(new Vector3Int(x, y, 0)) == null;
+
+                if (height > 0.65f){
+                    bool isResourceTile = Random.Range(0, 100) < 10;
+                    if (isResourceTile)
+                    {
+                        int randomTileIndex = Random.Range(0, treeTiles.Length);
+                        resourceManager.AddResourceTile(new Vector3Int(x, y, 0), treeTiles[randomTileIndex]);
+                    }
+                } else if (height < 0.35f && height > 0.25f)
+                {
+                    bool isResourceTile = Random.Range(0, 100) < 10;
+
+                    if (isResourceTile && isValidSpawnLocation)
+                    {
+                        int randomTileIndex = Random.Range(0, rockTiles.Length);
+                        resourceManager.AddResourceTile(new Vector3Int(x, y, 0), rockTiles[randomTileIndex]);
+                    }
+                }
+            }
+        }
         
     }
 
