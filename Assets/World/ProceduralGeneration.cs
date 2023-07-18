@@ -12,6 +12,7 @@ public class ProceduralGeneration : MonoBehaviour
     [SerializeField] private Tile[] rockTiles;
     [SerializeField] private Tilemap obstacleTilemap;
     [SerializeField] private Tile[] obstacleTiles;
+    [SerializeField] private GameObject world;
     [SerializeField] private Tilemap worldTilemap;
     [SerializeField] private RuleTile[] worldTiles;
     [SerializeField] private Tilemap backgroundTilemap;
@@ -19,13 +20,13 @@ public class ProceduralGeneration : MonoBehaviour
 
 
     public void GenerateMap(int mapSize,
-        List<List<float>> heightMap, 
-        List<List<float>> biomeMap)
+        List<List<float>> heightMap
+        )
     {   
         GenerateBackgroundTiles(mapSize);
         GenerateWorldTiles(mapSize, heightMap);
 
-        GenerateBiomes(mapSize, heightMap, biomeMap);
+        GenerateResourceBiomes(mapSize, heightMap);
 
         CleanUpWorldTiles(mapSize);
         // GenerateResourceTiles(mapSize);
@@ -45,44 +46,51 @@ public class ProceduralGeneration : MonoBehaviour
 
     private void GenerateWorldTiles(int mapSize, List<List<float>> heightMap)
     {
+        Tilemap grassTilemap = world.transform.Find("Grass").GetComponent<Tilemap>();
+        Tilemap forestTilemap = world.transform.Find("Forest").GetComponent<Tilemap>();
+        Tilemap sandTilemap = world.transform.Find("Sand").GetComponent<Tilemap>();
         for (int x = -mapSize; x < mapSize; x++)
         {
             for (int y = -mapSize; y < mapSize; y++)
             {
                 float height = heightMap[x + mapSize][y + mapSize];
-                if (height > 0.65f){
-                    // raised
-                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[1]);
-                } else if (height > 0.35f)
-                {
-                    // grass
-                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[0]);
-                } else if (height > 0.25f)
+                if (height > 0.25f)
                 {
                     // sand
+                    sandTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[2]);
                     worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[2]);
+                }
+                if (height > 0.35f)
+                {
+                    // grass
+                    grassTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[0]);
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[0]);
+                }
+                if (height > 0.65f){
+                    // forest
+                    forestTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[1]);
+                    worldTilemap.SetTile(new Vector3Int(x, y, 0), worldTiles[1]);
                 }
             }
         }
     }
 
-    private void GenerateBiomes(int mapSize, List<List<float>> heightMap, List<List<float>> biomeMap){
+    private void GenerateResourceBiomes(int mapSize, List<List<float>> heightMap){
         ResourceManager resourceManager = resourceTilemap.GetComponent<ResourceManager>();
 
         for (int x = -mapSize; x < mapSize; x++){
             for (int y = -mapSize; y < mapSize; y++){
                 float height = heightMap[x + mapSize][y + mapSize];
-                float biome = biomeMap[x + mapSize][y + mapSize];
                 bool isValidSpawnLocation = ValidSpawnLocation(x, y, mapSize) && resourceTilemap.GetTile(new Vector3Int(x, y, 0)) == null;
 
-                if (height > 0.65f){
+                if (height > 0.60f){
                     bool isResourceTile = Random.Range(0, 100) < 10;
-                    if (isResourceTile)
+                    if (isResourceTile && isValidSpawnLocation)
                     {
                         int randomTileIndex = Random.Range(0, treeTiles.Length);
                         resourceManager.AddResourceTile(new Vector3Int(x, y, 0), treeTiles[randomTileIndex]);
                     }
-                } else if (height < 0.35f && height > 0.25f)
+                } else if (height < 0.40f && height > 0.25f)
                 {
                     bool isResourceTile = Random.Range(0, 100) < 10;
 
@@ -203,7 +211,11 @@ public class ProceduralGeneration : MonoBehaviour
 
     private void ClearAllTilemaps()
     {
+        world.transform.Find("Grass").GetComponent<Tilemap>().ClearAllTiles();
+        world.transform.Find("Forest").GetComponent<Tilemap>().ClearAllTiles();
+        world.transform.Find("Sand").GetComponent<Tilemap>().ClearAllTiles();
         worldTilemap.ClearAllTiles();
+
         resourceTilemap.ClearAllTiles();
         backgroundTilemap.ClearAllTiles();
         obstacleTilemap.ClearAllTiles();

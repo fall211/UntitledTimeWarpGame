@@ -19,12 +19,12 @@ public class MapGenerator : MonoBehaviour {
 
         int noiseMapSize = mapSize * 2 + 1;
 
+
 		List<List<float>> heightMap = Noise.GenerateHeightMap(noiseMapSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
-		List<List<float>> biomeMap = Noise.GenerateNoiseMap(noiseMapSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
         ProceduralGeneration proceduralGeneration = GetComponent<ProceduralGeneration>();
         proceduralGeneration.ClearMap();
-        proceduralGeneration.GenerateMap(mapSize, heightMap, biomeMap);
+        proceduralGeneration.GenerateMap(mapSize, heightMap);
 	}
 
 	void OnValidate() {
